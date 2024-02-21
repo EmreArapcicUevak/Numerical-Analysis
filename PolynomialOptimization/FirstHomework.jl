@@ -2,7 +2,7 @@ function f(n :: Integer, coefficients :: Union{AbstractArray, Tuple}, x :: Real)
     @assert length(coefficients) ≥ n
     local value = 0
 
-    for (index, coef) ∈ enumerate(coefficients)
+    for (index, coef) ∈ enumerate(coefficients[begin:n])
         value += coef * x ^ (index - 1)
     end
 
