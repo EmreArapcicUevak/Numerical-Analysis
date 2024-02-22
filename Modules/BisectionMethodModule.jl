@@ -34,18 +34,15 @@ function findRoot(f :: Function, a :: Float64, b :: Float64)
     return c, itterations
 end
 
-function smartBisectionMethod(f :: Function, a :: Float64, b :: Float64; maxItterations = 1000)
+function smartBisectionMethod(f :: Function, a :: Float64, b :: Float64; maxItterations = 1000, shift = (x,y) -> (y-x) / 2)
     @assert a < b
 
-
-    for i ∈ (x for x ∈ 1:maxItterations)
-        println(i)
+    for i ∈ 1:maxItterations
         local result = findRoot(f,a,b)
 
         if result ≡ nothing
-            local shift = a + (b-a)/2
-            a, b = a - shift, b + shift
-            println("a: $a . b: $b . shift: $shift.")
+            local shiftAmount = shift(a,b)
+            a, b = a - shiftAmount, b + shiftAmount
         else
             return result
         end
