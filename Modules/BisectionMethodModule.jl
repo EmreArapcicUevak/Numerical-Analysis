@@ -3,48 +3,54 @@ module BisectionMethodModule
 export findRoot
 export smartBisectionMethod    
 
-rootExistance(func :: Function, a :: Float64, b :: Float64) = (sign ∘ func)(a) != (sign ∘ func)(b) # Bisection technique/Method {not as fast but it is reliable}
-# Avoid multiplying because of overflow problems with big numbers
+rootExistance(leftBound :: Real, rightBound :: Real) = sign(leftBound) ≠ sign(rightBound)
 
-function findRoot(f :: Function, a :: Float64, b :: Float64)
+function findRoot(f :: Function, a :: Real, b :: Real; precision = 1e-15 :: Float64)
     @assert a < b 
+    local f_a, f_b = f(a), f(b)
 
-    if f(a) == 0
+    if abs(f_a) ≤ precision
         return a
-    elseif f(b) == 0
+    elseif abs(f_b) ≤ precision
         return b
-    elseif rootExistance(f,a,b) == false 
+    elseif rootExistance(f_a, f_b) == false 
         return nothing
     end
 
-    local itterations, c = 0, 0
-    while b-a > 1e-10
+    local itterations, c = 0, a + 0.5*(b-a)
+    while b-a > precision
         itterations += 1
-        c = a + (b-a)/2
 
-        if isapprox(f(c), 0) # isapprox is a function that checks if two numbers are approximately equal, helps with floating point errors
-            return c, itterations
-        elseif rootExistance(f, a, c)
+        f_c = f(c)
+        if abs(f_c) ≤ precision # isapprox is a function that checks if two numbers are approximately equal, helps with floating point errors
+            return (c = c, itterations = itterations)
+        elseif rootExistance(f_a, f_c)
             b = c
         else
             a = c
         end
+        c = a + 0.5*(b-a)
     end
 
-    return c, itterations
+    return (c = c, itterations = itterations)
 end
 
-function smartBisectionMethod(f :: Function, a :: Float64, b :: Float64; maxItterations = 1000, shift = (x,y) -> (y-x) / 2)
+function smartBisectionMethod(f :: Function, a :: Real, b :: Real, k = 2 :: Real; maxItterations = 1000 :: Integer, domain = (-Inf, Inf) :: Tuple{Real, Real}, precision = 1e-15 :: Real)
     @assert a < b
+    L = b - a
+    center = a + 0.5*L
 
+    a, b = domain[1] ≤ a ≤ domain[2] ? a : domain[1], domain[1] ≤ b ≤ domain[2] ? b : domain[2]
+    
     for i ∈ 1:maxItterations
-        local result = findRoot(f,a,b)
-
-        if result ≡ nothing
-            local shiftAmount = shift(a,b)
-            a, b = a - shiftAmount, b + shiftAmount
+        println("(a, b) = ($a, $b)")
+        if rootExistance(f(a), f(b))
+            println("(a, b) = ($a, $b)\nItterations taken: $i")
+            return findRoot(f, a, b; precision = precision)
         else
-            return result
+            L *= k
+            a = center - L ≥ domain[1] ? center - L : domain[1]
+            b = center + L ≤ domain[2] ? center + L : domain[2]
         end
     end
 
