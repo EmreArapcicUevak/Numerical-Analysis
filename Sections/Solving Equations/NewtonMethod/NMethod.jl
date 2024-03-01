@@ -37,6 +37,11 @@ scatter!([2],[f(2)])
 
 f(x) = 2 - exp(x)
 result = QuasiNewtonMethod(f,0,1; ϵ = 1e-12)
-showPoint(f, result.c; domain = (-2, 2))
+ShowPoint(f, result.c; domain = (-2, 2))
+
+
+g(x) = x^2 - 2
+result = QuasiNewtonMethod(g,0,-1; ϵ = 1e-12)
+ShowPoint(g, result.c; domain = (-2, 2))
 
 smartBisectionMethod(f, -2, 2)
