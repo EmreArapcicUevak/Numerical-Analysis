@@ -28,6 +28,7 @@ module NewtonMethodModule
             for i ∈ 1:maxIterations
                 local xₖ = x₁ - (x₁ - x₀) * f₁ / (f₁ - f₀)
                 x₀, x₁ = x₁, xₖ
+                f₀, f₁ = f(x₀), f(x₁)
 
                 println("k: $i, xₖ: $xₖ, f(xₖ): $(f(xₖ))")
                 if abs(x₁ - x₀) ≤ ϵ || abs(f(x₁)) ≤ δ
