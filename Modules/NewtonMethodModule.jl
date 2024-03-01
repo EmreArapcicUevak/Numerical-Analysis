@@ -3,7 +3,7 @@ module NewtonMethodModule
     
         function NewtonMethod(f :: Function, f_prime :: Function, x₀ :: Real; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000)
             for i ∈ 1:maxIterations
-                local f_prime_x₀ = f_prime(x₀)
+                local f_prime_x₀, f_x₀ = f_prime(x₀), f(x₀)
 
                 #=
                 if abs(f_prime_x₀) < ϵ
@@ -11,8 +11,8 @@ module NewtonMethodModule
                 end
                 =#
 
-                local h = f(x₀) / f_prime_x₀
-                if abs(h / x₀) ≤ ϵ
+                local h = f_x₀ / f_prime_x₀
+                if abs(h / x₀) ≤ ϵ || abs(f_x₀) ≤ δ
                     return (c = x₀,iterations = i)
                 end
 
