@@ -1,0 +1,22 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: |
+          👋 Hello! Thank you for your interest in the International University of Sarajevo Numerical Analysis Projects repository. This space is dedicated to collaborative work among students and faculty of the International University of Sarajevo. If you are part of our university and have questions or proposals, please reach out directly via our university communication channels.
+          
+          If you're not affiliated with the International University of Sarajevo but have questions or suggestions, we appreciate your understanding that this repository is intended for internal collaboration. Thank you for your interest and understanding.
+        pr-message: |
+          👋 Hello! Thank you for your interest in contributing to the International University of Sarajevo Numerical Analysis Projects repository. This repository is specifically for collaboration among students and faculty of the International University of Sarajevo. If you are a member of our university and this is a mistake, please reach out directly through our designated university channels for project collaboration.
+          
+          For those not affiliated with the International University of Sarajevo, we appreciate your understanding that this repository is not open for external contributions. Thank you for your interest and understanding.
