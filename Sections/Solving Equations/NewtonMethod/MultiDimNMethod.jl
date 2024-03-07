@@ -30,3 +30,17 @@ J(x :: Vector) = [
 
 c, itt =  MultiDimentionalNewtonMethod(F, J, [.1, .1])
 F(c)
+
+F(x :: Vector) = [
+    -x[1]*cos(x[2]) - 1,
+    x[1]*x[2]+x[3],
+    exp(-x[3]) * sin(x[1] + x[2]) + x[1]^2 - x[2]^2
+]
+
+J(x :: Vector) = [
+    -cos(x[2]) x[1]*sin(x[2]) 0;
+    x[2] x[1] 1;
+    exp(-x[3])*cos(x[1] + x[2])+2x[1] exp(-x[3])*cos(x[1] + x[2])-2x[2] -exp(-x[3])*sin(x[1] + x[2])
+]
+c, itt = MultiDimentionalNewtonMethod(F, J, [.1,.1,.1])
+F(c)
