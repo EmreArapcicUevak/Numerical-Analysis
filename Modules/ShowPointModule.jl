@@ -15,5 +15,5 @@ module ShowPointModule
         scatter!([x], [y], label = "Root", color = :purple)
     end
 
-    ShowPoint(f :: Function, Point :: Tuple{Real, Real}; label = "Point", numOfPoints = 9000, xlabel = "x", ylabel = "y" , color = :blue, title = "Plot" :: String, domain :: Tuple{Real, Real}) = showPoint(f, Point[1], Point[2]; label = label, numOfPoints = numOfPoints, xlabel = xlabel, ylabel = ylabel, color = color, title = title, domain = domain)
+    ShowPoint(f :: Function, Point :: Tuple{Real, Real}; label = "Point", numOfPoints = 9000, xlabel = "x", ylabel = "y" , color = :blue, title = "Plot" :: String, domain :: Tuple{Real, Real}) = ShowPoint(f, Point[1], Point[2]; label = label, numOfPoints = numOfPoints, xlabel = xlabel, ylabel = ylabel, color = color, title = title, domain = domain)
 end
