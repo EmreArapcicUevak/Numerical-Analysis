@@ -1,5 +1,6 @@
 module NewtonMethodModule
-        export NewtonMethod, QuasiNewtonMethod
+        using LinearAlgebra
+        export NewtonMethod, QuasiNewtonMethod, MultiDimentionalNewtonMethod
     
         function NewtonMethod(f :: Function, f_prime :: Function, x₀ :: Real; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000)
             for i ∈ 1:maxIterations
@@ -34,6 +35,22 @@ module NewtonMethodModule
                 if abs(x₁ - x₀) ≤ ϵ || abs(f(x₁)) ≤ δ
                     return (c = x₁,iterations = i)
                 end
+            end
+
+            return nothing
+            
+        end
+
+        function MultiDimentionalNewtonMethod(F :: Function, J :: Function, x₀ :: Vector{T}; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000) where T <: Real
+            for i ∈ 1:maxIterations
+                local J_x₀, F_x₀ = J(x₀), F(x₀)
+                local x₁ = x₀ - J_x₀ \ F_x₀
+
+                if norm(x₁ - x₀, 2) ≤ ϵ || norm(F(x₁), 2) ≤ δ
+                    return (c = x₁,iterations = i)
+                end
+
+                x₀ = x₁
             end
 
             return nothing
