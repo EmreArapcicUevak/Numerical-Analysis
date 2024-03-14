@@ -1,6 +1,6 @@
 module NewtonMethodModule
         using LinearAlgebra
-        export NewtonMethod, QuasiNewtonMethod, MultiDimentionalNewtonMethod
+        export NewtonMethod, QuasiNewtonMethod, MultiDimentionalNewtonMethod, AproximateJacobian
     
         function NewtonMethod(f :: Function, f_prime :: Function, x₀ :: Real; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000)
             for i ∈ 1:maxIterations
@@ -55,5 +55,18 @@ module NewtonMethodModule
 
             return nothing
             
+        end
+
+        function AproximateJacobian(F :: Function, x₀ :: Vector{T}; t = 1e-6 :: Float64) where T <: Real
+            local N = length(x₀)
+            local J = zeros(T, N, N)
+
+            for i ∈ 1:N
+                local x = copy(x₀)
+                x[i] += t
+                J[:,i] = (F(x) - F(x₀)) / t
+            end
+
+            return J
         end
 end

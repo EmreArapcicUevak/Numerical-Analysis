@@ -42,3 +42,14 @@ for N ∈ 140:10:200
     savefig("Plot$(N).png")
     println("N = $N, iterations = $itt")
 end
+
+N = 60
+JacobianAprox(X :: Vector) = AproximateJacobian(F, X; t = 1e-12)
+c1, itt1 = MultiDimentionalNewtonMethod(F, JacobianAprox, zeros(N); maxIterations = 9*10^6)
+c2, itt2 = MultiDimentionalNewtonMethod(F, J, zeros(N); maxIterations = 9*10^6)
+
+using LinearAlgebra
+norm(c1 - c2, 2)
+
+plot(LinRange(0,1,N+2), [0; c1; 0], label = "Aproximate Jacobian", ylabel = "y(t)", xlabel = "t")
+plot!(LinRange(0,1,N+2), [0; c2; 0], label = "Exact Jacobian")
