@@ -1,5 +1,5 @@
 module NewtonMethodModule
-        using LinearAlgebra
+        using LinearSystemModule
         export NewtonMethod, QuasiNewtonMethod, MultiDimentionalNewtonMethod, AproximateJacobian
     
         function NewtonMethod(f :: Function, f_prime :: Function, x₀ :: Real; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000)
@@ -44,8 +44,7 @@ module NewtonMethodModule
         function MultiDimentionalNewtonMethod(F :: Function, J :: Function, x₀ :: Vector{T}; δ = 1e-15, ϵ = 1e-15, maxIterations = 1000) where T <: Real
             for i ∈ 1:maxIterations
                 local J_x₀, F_x₀ = J(x₀), F(x₀)
-                local x₁ = x₀ - J_x₀ \ F_x₀
-
+                local x₁ = x₀ - SolvePLU(PLUFactorization(J_x₀), F_x₀)
                 if norm(x₁ - x₀, 2) ≤ ϵ || norm(F(x₁), 2) ≤ δ
                     return (c = x₁,iterations = i)
                 end
