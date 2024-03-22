@@ -87,4 +87,10 @@ module LinearSystemModule
     function SolvePLU(Result :: NamedTuple{(:P, :U, :L), Tuple{Vector{Int64}, Matrix{T}, Matrix{T}}}, b :: Vector{T}) where T <: validType 
         return SolvePLU(Result.P, Result.L, Result.U, b)
     end
+
+    export norm
+    function norm(x :: Vector{T}, p :: Int) where T <: validType
+        @assert p > 0 "p must be greater than 0"
+        return sum(abs.(x).^p)^(1/p)
+    end
 end
