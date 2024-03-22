@@ -36,7 +36,7 @@ function J(X :: Vector)
 end
 
 
-for N ∈ 140:10:200
+for N ∈ 10:10:100
     c, itt = MultiDimentionalNewtonMethod(F, J, zeros(N); maxIterations = 9*10^6)
     scatter(LinRange(0,1,N+2), [0; c; 0], label = "N = $N", ylabel = "y(t)", xlabel = "t")
     savefig("Plot$(N).png")
@@ -52,4 +52,4 @@ using LinearAlgebra
 norm(c1 - c2, 2)
 
 plot(LinRange(0,1,N+2), [0; c1; 0], label = "Aproximate Jacobian", ylabel = "y(t)", xlabel = "t")
-plot!(LinRange(0,1,N+2), [0; c2; 0], label = "Exact Jacobian")
+scatter(LinRange(0,1,N+2), [0; c2; 0], label = "Exact Jacobian")

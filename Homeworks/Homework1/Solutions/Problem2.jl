@@ -1,6 +1,6 @@
 push!(LOAD_PATH, pwd()*"/Modules/")
 using BisectionMethodModule, Revise, Plots
-
+plotlyjs()
 g = 32.17
 f(ω) = 3.4*ω^2 + g*((ℯ^ω - ℯ^(-ω))*0.5 - sin(ω))
 
