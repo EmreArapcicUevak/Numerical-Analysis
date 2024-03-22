@@ -1,6 +1,6 @@
 module LinearSystemModule
 
-    using MatrixAnalysisModule, ElemenetaryMatrixOperationsModule
+    using MatrixAnalysisModule, ElementaryMatrixOperationsModule
     export SolveUpperDiagonal, SolveLowerDiagonal
 
     validType = Union{Rational, AbstractFloat}
@@ -43,19 +43,48 @@ module LinearSystemModule
         return I
     end
 
-    export LUFactorization!
-    function LUFactorization!(A :: Matrix{T}) <: Matrix{T} where T <: validType
+    export PLUFactorization!
+    function PLUFactorization!(A :: Matrix{T}) :: NamedTuple{(:P, :L), Tuple{Vector{Int64}, Matrix{T}}} where T <: validType
         rows, columns = size(A)
         L = GetIdentityMatrix(T, rows)
+        P = collect(1:columns)
 
         for i ∈ 1:columns
-                for j ∈ i+1:rows
-                    c = a[j,i] / a[i,i]
-                    AddRowMultiple!(A, j, i, -c)
-                    AddRowMultiple!(L, j, i, c)
-                end
+            swapIndex = argmax(abs.(A[i:end,i])) + i - 1
+            if i != swapIndex
+                SwapRows!(A, i, swapIndex)
+                L[i,1:i-1], L[swapIndex,1:i-1] = L[swapIndex,1:i-1], L[i,1:i-1]
+                P[i], P[swapIndex] = P[swapIndex], P[i]
+            end
+
+            @assert A[i,i] != 0 "A is singular"
+
+            for j ∈ i+1:rows
+                c = A[j,i] / A[i,i]
+                AddRowMultiple!(A, j, i, -c)
+                L[j,i] = c
+            end
         end
         
-        return L
+        return (P = P, L = L)
+    end
+
+    export PLUFactorization
+    function PLUFactorization(A :: Matrix{T}) :: NamedTuple{(:P, :U, :L), Tuple{Vector{Int64}, Matrix{T}, Matrix{T}}}  where T <: validType
+        local U = copy(A)
+        local P, L = PLUFactorization!(U)
+        return (P = P, U = U, L = L)
+    end
+
+    export SolvePLU
+    function SolvePLU(P :: Vector{Int64}, L :: Matrix{T}, U :: Matrix{T}, b :: Vector{T}) where T <: validType
+        y = SolveLowerDiagonal(L, b[P])
+        x = SolveUpperDiagonal(U, y)
+        
+        return x
+    end
+
+    function SolvePLU(Result :: NamedTuple{(:P, :U, :L), Tuple{Vector{Int64}, Matrix{T}, Matrix{T}}}, b :: Vector{T}) where T <: validType 
+        return SolvePLU(Result.P, Result.L, Result.U, b)
     end
 end
