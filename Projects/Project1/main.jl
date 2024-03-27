@@ -1,7 +1,7 @@
 push!(LOAD_PATH, pwd()*"/Modules/")
 #push!(LOAD_PATH, pwd()*"/Projects/ProjectX/Local Modules/") # Uncomment this line if you want to use the local modules for project X
 
-using Revise, Plots # Always leave this on!
+using Revise, CairoMakie# Always leave this on!
 
 #### Other modules that you might need go here ####
 using NewtonMethodModule
@@ -51,12 +51,22 @@ function J(X :: Vector{T}) :: Matrix{T} where T <: numericalTypes
     return AproximateJacobian(F, X)
 end
 
-N = 10
-t = LinRange(startingPoint, endingPoint, N + 2)
+figure = Figure(backgroundcolor = "#c8d6e5", size=(900, 1500));
+for (index, N) ∈ enumerate(collect(10:10:400))
+    t = LinRange(startingPoint, endingPoint, N + 2)
+    solution = MultiDimentionalNewtonMethod(F, J, zeros(Float64, N))
 
-solution = MultiDimentionalNewtonMethod(F, J, zeros(Float64, N))
-if solution !== nothing
-    yPoints = [yStart; solution.c; yEnd]
-    plot(t, yPoints, label = "Approximation", ylabel = "y(t)", xlabel = "t")
-    scatter!(t, yPoints)
+    if solution !== nothing
+        yPoints = [yStart; solution.c; yEnd]
+        row = div(index - 1, 4) + 1
+        column = mod(index - 1, 4) + 1
+        ax = Axis(figure[row, column], title = "N = $N", xlabel = "t", ylabel = "y(t)")
+        lines!(ax, t, yPoints; color = "#54a0ff")
+    else
+        println("No solution found for N = $N")
+        break
+    end
 end
+
+figure
+save("Projects/Project1/NewtonMethod.png", figure, px_per_unit = 2)
