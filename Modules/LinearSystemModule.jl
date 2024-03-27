@@ -47,7 +47,7 @@ module LinearSystemModule
     function PLUFactorization!(A :: Matrix{T}) :: NamedTuple{(:P, :L), Tuple{Vector{Int64}, Matrix{T}}} where T <: validType
         rows, columns = size(A)
         L = GetIdentityMatrix(T, rows)
-        P = collect(1:columns)
+        P = collect(1:rows)
 
         for i ∈ 1:columns
             swapIndex = argmax(abs.(A[i:end,i])) + i - 1
