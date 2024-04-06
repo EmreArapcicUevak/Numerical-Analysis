@@ -24,7 +24,7 @@ function F(Y :: Vector{T}) :: Vector{T} where T <: numericalTypes
         local d²y = (Y[2] - 2Y[1] + yStart) / h²
         local dy = (Y[2] - yStart) / (2h)
         local tᵢ = startingPoint + h
-        d²y - dy^2 + Y[1] - log(tᵢ)
+        d²y + dy^2 + Y[1] - log(tᵢ)
     end)
 
     for i ∈ 2:N-1
@@ -32,7 +32,7 @@ function F(Y :: Vector{T}) :: Vector{T} where T <: numericalTypes
             local d²y = (Y[i+1] - 2Y[i] + Y[i-1]) / h²
             local dy = (Y[i+1] - Y[i-1]) / (2h)
             local tᵢ = startingPoint + i*h
-            d²y - dy^2 + Y[i] - log(tᵢ)
+            d²y + dy^2 + Y[i] - log(tᵢ)
         end)
     end
 
@@ -40,7 +40,7 @@ function F(Y :: Vector{T}) :: Vector{T} where T <: numericalTypes
         local d²y = (yEnd - 2Y[N] + Y[N-1]) / h²
         local dy = (yEnd - Y[N-1]) / (2h)
         local tᵢ = endingPoint - h
-        d²y - dy^2 + Y[N] - log(tᵢ)
+        d²y + dy^2 + Y[N] - log(tᵢ)
     end)
 
     return X
