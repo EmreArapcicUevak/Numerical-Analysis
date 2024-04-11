@@ -53,21 +53,21 @@ scatter(x, y, label = "Value Points")
 plot!(xExp, yExp, label = "Interpolated Polynomial")
 
 
-x = Float64[0,pi/2, pi, 3pi/2, 2pi]
-y = sin.(x)
-coef = NewtonDivider(x, y)
+## Chebychev Interpolation
+f(x :: Real) = 1 / (1 + 25 * x^2)
+N = 15
+a,b = -pi/4,pi/4
+x = LinRange(a,b , 10000)
+plot(x, f.(x), label = "Value Points")
 
-poly(X) = coef[1] + coef[2] * (X - x[1]) + coef[3] * (X - x[1]) * (X - x[2]) + coef[4] * (X - x[1]) * (X - x[2]) * (X - x[3])
-xExp = LinRange(0, 2pi, 9000)
-yExp = poly.(xExp)
-scatter(x, y, label = "Value Points")
-plot!(xExp, yExp, label = "Interpolated Polynomial")
+xᵢ = ChebyshevNodes(a,b, N)
+coefCheb = NewtonDividedDifference(xᵢ, f.(xᵢ))
+polyAprox = NewtonInterpolation(xᵢ, coefCheb)
 
+plot!(x, polyAprox.(x), label = "Chebychev Polynomial $(N)")
 
-x = Float64[0,1,2,3]
-y = Float64[3,5,7,9]
-coef = NewtonDivider(x, y)
+xⱼ = collect(LinRange(a,b, N))
 
-poly(X) = coef[1] + coef[2] * (X - x[1]) + coef[3] * (X - x[1]) * (X - x[2]) + coef[4] * (X - x[1]) * (X - x[2]) * (X - x[3])
-xExp = LinRange(0, 3, 9000)
-yExp = poly.(xExp)
+coefLinDistance = NewtonDividedDifference(xⱼ, f.(xⱼ))
+polyLinDistance = NewtonInterpolation(xⱼ, coefLinDistance)
+plot!(x, polyLinDistance.(x), label = "Linearly Spaced Polynomial $(N)")
