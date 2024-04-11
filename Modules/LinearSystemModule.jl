@@ -89,7 +89,7 @@ module LinearSystemModule
     end
 
     export norm
-    function norm(x :: Vector{T}, p :: Int) where T <: validType
+    function norm(x :: Vector{T}, p :: Int = 2) where T <: validType
         @assert p > 0 "p must be greater than 0"
         return sum(abs.(x).^p)^(1/p)
     end
