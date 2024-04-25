@@ -77,4 +77,38 @@ module InterpolationModule
     function ChebyshevNodes(a :: Real, b :: Real, N :: Int) :: Vector{Float64}
         return [(b + a) * 0.5 + (b - a) * 0.5 * cos((2i - 1) * π / (2N)) for i ∈ 1:N]
     end
+
+    export HermitianInterpolationCoef
+    function HermitianInterpolationCoef(X :: Vector{T}, Y :: Vector{T}, YPrime :: Vector{T}) :: Array{Float64} where T <: Real
+        local N = length(X)
+        @assert N == length(Y) "X and Y must have the same length"
+        @assert N == length(YPrime) "X and YPrime must have the same length"
+
+        z = [x for x ∈ X for _ ∈ 1:2]
+        y = Float64[]
+
+        for i ∈ 1:N
+            push!(y, Y[i])
+            push!(y, YPrime[i])
+        end
+
+        N = 2N
+        for i ∈ 1:N
+            for j ∈ N:-1:i+1
+                if z[j] != z[j-i]
+                    y[j] = (y[j] - y[j-1]) / (z[j] - z[j-i])
+                end
+            end
+        end
+
+        return y
+    end
+
+    export HermitianInterpolation
+    function HermitianInterpolation(X :: Vector{T}, Coef :: Array{T}) :: Function where T <: Real
+        local N = length(X)
+        @assert N == size(Coef, 1) "X and Coef must have the same length"
+
+        return x :: Real -> sum([Coef[i, 1] * prod([x - X[j] for j ∈ 1:i-1]) for i ∈ 1:N])
+    end
 end
