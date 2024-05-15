@@ -71,3 +71,22 @@ xⱼ = collect(LinRange(a,b, N))
 coefLinDistance = NewtonDividedDifference(xⱼ, f.(xⱼ))
 polyLinDistance = NewtonInterpolation(xⱼ, coefLinDistance)
 plot!(x, polyLinDistance.(x), label = "Linearly Spaced Polynomial $(N)")
+
+## Hermitian Interpolation
+f(x :: Real) = exp(x) + sin(10x)
+fPrime(x :: Real) = exp(x) + 10cos(10x)
+
+x = Float64[0, 0.4, 1, 2, 2.6, 3]
+y = f.(x)
+yPrime = fPrime.(x)
+
+hermitCoef = HermitianInterpolationCoef(x, y, yPrime)
+
+xᵢ = LinRange(0, 3, 100)
+yᵢ = f.(xᵢ)
+InterpoaltionGuess = NewtonInterpolation([X for X ∈ x for _ ∈ 1:2], hermitCoef)
+
+plot(xᵢ, yᵢ, label = "Value Points")
+plot!(xᵢ, InterpoaltionGuess.(xᵢ), label = "Hermitian Interpolation")
+InterpoaltionGuess.(x)
+y
